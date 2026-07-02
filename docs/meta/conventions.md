@@ -18,3 +18,6 @@ summary: The rules this documentation set follows so it stays consistent.
   `<!-- codedoc:end -->`) and generated files (`llms.txt`, adapter files) are
   produced by `codedoc sync` — never hand-edit them.
 - **Decisions are append-only.** See `docs/decisions/`.
+- **Templates/partials use a leading underscore** (e.g. `_template.md`). Such
+  files are skipped by the scanner: they stay off indexes and out of
+  validation, but remain on disk as valid link targets.

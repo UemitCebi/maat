@@ -21,7 +21,10 @@ managed navigation block inside `docs/index.md`.
 - `codedoc/model.py` — `DocsModel.scan(root, docs_dir)` walks the docs
   directory, parses each Markdown file's front-matter, and produces a list of
   `Document` objects (with `rel`, `meta`, `status`, `related_code`, and helpers
-  to extract Markdown links).
+  to extract Markdown links). Files whose name begins with `_` (e.g.
+  `decisions/_template.md`) are treated as templates/partials and skipped, so
+  they never appear in indexes or validation while remaining valid link
+  targets on disk.
 - `codedoc/generate.py` — pure rendering functions: `llms_txt()`,
   `index_nav()`, `adapter_content()`, plus `splice()` which inserts generated
   text between `<!-- codedoc:begin -->` / `<!-- codedoc:end -->` markers

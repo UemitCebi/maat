@@ -243,5 +243,31 @@ def test_check_without_docs_exits_2(tmp_path):
     assert main(["check", str(tmp_path)]) == 2
 
 
+# --------------------------------------------------------------------------- #
+# scan: templates/partials
+# --------------------------------------------------------------------------- #
+
+def test_underscore_files_excluded_from_model(tmp_path):
+    _init(tmp_path)
+    rels = {d.rel for d in DocsModel.scan(str(tmp_path), "docs").documents}
+    # The ADR template ships as decisions/_template.md and must not be a doc.
+    assert not any(r.endswith("_template.md") for r in rels)
+
+
+def test_underscore_template_not_in_generated_index(tmp_path):
+    _init(tmp_path)
+    llms = (tmp_path / "docs" / "llms.txt").read_text(encoding="utf-8")
+    index = (tmp_path / "docs" / "index.md").read_text(encoding="utf-8")
+    assert "_template.md" not in llms
+    assert "_template.md" not in index
+
+
+def test_link_to_underscore_template_is_valid(tmp_path):
+    _init(tmp_path)
+    # decisions/README.md links to _template.md; excluding it from the model
+    # must not make that link look broken (file still exists on disk).
+    assert "broken_link" not in _codes(_findings(tmp_path))
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

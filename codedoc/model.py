@@ -102,6 +102,12 @@ class DocsModel:
             for name in sorted(filenames):
                 if not name.endswith(".md"):
                     continue
+                # Underscore-prefixed files are templates/partials (e.g.
+                # decisions/_template.md), not real docs: skip them so they
+                # stay off indexes and out of validation. They still exist on
+                # disk, so links pointing at them remain valid.
+                if name.startswith("_"):
+                    continue
                 full = os.path.join(dirpath, name)
                 meta, body = frontmatter.read(full)
                 model.documents.append(Document(full, root, meta, body))

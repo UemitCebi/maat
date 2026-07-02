@@ -31,7 +31,6 @@ humans can use the map below.
 - [0003 AGENTS.md as source of truth with generated adapters](decisions/0003-agents-md-source-of-truth.md) — One canonical instruction file (AGENTS.md); every other agent's file is generated from it and verified in CI.
 - [0004 Detect staleness via related_code timestamps](decisions/0004-related-code-staleness.md) — Docs declare the source files they describe; check compares mtimes to flag docs that may lag behind code.
 - [Architecture Decision Records](decisions/README.md) — Index of ADRs — the append-only log of why the system is the way it is.
-- [NNNN Short title of the decision](decisions/_template.md) — One line — the decision in a sentence.
 
 ### Guides — how to work on it
 
