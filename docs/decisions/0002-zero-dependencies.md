@@ -1,13 +1,20 @@
 ---
 title: 0002 Zero runtime dependencies
-status: current
-summary: CodeDoc is stdlib-only Python so it can be vendored into any repo without installing anything.
+status: deprecated
+summary: Superseded by ADR 0005. The zero-runtime-dependency goal is preserved by the Go static binary; the stdlib-only-Python mechanism is retired.
 ---
 
 # 0002. Zero runtime dependencies
 
-- **Status:** accepted
+- **Status:** deprecated — superseded by [0005 Rewrite the CLI in Go](0005-go-rewrite.md)
 - **Date:** 2026-07-02
+
+> **Superseded (2026-07-02).** This ADR's *goal* — zero runtime dependencies —
+> is preserved and strengthened by [ADR 0005](0005-go-rewrite.md): a single Go
+> static binary has no runtime dependencies at all. Its *mechanism* —
+> stdlib-only Python 3.8+ with a hand-written YAML subset — is retired, because
+> the Python interpreter is itself a runtime dependency. The original text is
+> kept below unaltered, as ADRs are append-only.
 
 ## Context
 

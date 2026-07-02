@@ -3,14 +3,14 @@ title: CLI reference
 status: current
 summary: Every codedoc command, flag, and exit code.
 related_code:
-  - codedoc/cli.py
+  - internal/codedoc/cli.go
 ---
 
 # CLI reference
 
-CodeDoc is invoked as `python3 -m codedoc <command>` (or `codedoc <command>`
-if installed on `PATH`). All commands take an optional trailing `PATH`
-argument — the repository root — which defaults to the current directory.
+CodeDoc is a single self-contained binary invoked as `codedoc <command>`. All
+commands take an optional trailing `PATH` argument — the repository root — which
+defaults to the current directory.
 
 ```
 codedoc init  [--name NAME] [--summary TEXT] [--force] [PATH]

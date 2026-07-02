@@ -16,10 +16,6 @@ Copy [`_template.md`](_template.md) to `NNNN-short-title.md` (next number).
 
 ## Log
 
-Newest first:
-
-- [0005 Rewrite the CLI in Go, distribute a single static binary](0005-go-rewrite.md)
-- [0004 Detect staleness via related_code timestamps](0004-related-code-staleness.md)
-- [0003 AGENTS.md as the source of truth, with generated adapters](0003-agents-md-source-of-truth.md)
-- [0002 Zero runtime dependencies](0002-zero-dependencies.md) *(deprecated — superseded by 0005)*
+<!-- List ADRs newest first as you add them, e.g.:
 - [0001 Record architecture decisions](0001-record-architecture-decisions.md)
+-->

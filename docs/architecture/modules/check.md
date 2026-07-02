@@ -3,7 +3,7 @@ title: Check engine module
 status: current
 summary: The validation rules behind `codedoc check` — the CI gate.
 related_code:
-  - codedoc/check.py
+  - internal/codedoc/check.go
 ---
 
 # Check engine
@@ -15,8 +15,8 @@ objects. This is what `codedoc check` runs and what CI gates merges on.
 
 ## Key files
 
-- `codedoc/check.py` — one function per rule, plus `run_all()` which runs them
-  in order and sorts findings (errors first, then by location).
+- `internal/codedoc/check.go` — one function per rule, plus `RunAll()` which
+  runs them in order and sorts findings (errors first, then by location).
 
 ## The rules
 
@@ -33,7 +33,7 @@ promotes `staleness` to an error (useful for a stricter CI lane).
 
 ## Interfaces / contracts
 
-- Every rule returns `List[Finding]`; `run_all()` concatenates and sorts them.
+- Every rule returns `[]Finding`; `RunAll()` concatenates and sorts them.
 - `check` exits `1` if any `error`-severity finding is present, else `0`. A
   missing `docs/` directory exits `2` (misconfiguration, not a doc problem).
 - External links (`http://`, `mailto:`, anchors) are skipped by the link

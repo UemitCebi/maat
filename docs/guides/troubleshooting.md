@@ -11,7 +11,7 @@ summary: Common codedoc check failures and how to resolve them.
 The file was hand-edited or a `sync` was forgotten. Run:
 
 ```bash
-python3 -m codedoc sync
+codedoc sync
 ```
 
 Then commit the regenerated files. Never edit inside a
@@ -26,7 +26,7 @@ newer than the doc. If you have reviewed the doc and it is correct, re-save it
 so its timestamp advances:
 
 ```bash
-python3 -m codedoc sync     # or just touch/re-save the doc file
+codedoc sync     # or just touch/re-save the doc file
 ```
 
 If a path should never trigger staleness (generated code, vendored files), add

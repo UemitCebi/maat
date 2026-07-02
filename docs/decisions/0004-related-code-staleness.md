@@ -3,7 +3,7 @@ title: 0004 Detect staleness via related_code timestamps
 status: current
 summary: Docs declare the source files they describe; check compares mtimes to flag docs that may lag behind code.
 related_code:
-  - codedoc/check.py
+  - internal/codedoc/check.go
 ---
 
 # 0004. Detect staleness via `related_code` timestamps

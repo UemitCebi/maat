@@ -8,48 +8,48 @@ summary: How to set up, run, and contribute to CodeDoc locally.
 
 ## Prerequisites
 
-- **Python 3.8+** — that is the only requirement to *run* CodeDoc; it uses the
-  standard library exclusively (see
-  [ADR 0002](../decisions/0002-zero-dependencies.md)).
-- **pytest** — only to run the test suite.
+- **Go 1.24+** — to build and test CodeDoc. There are no other build- or
+  run-time dependencies (see [ADR 0005](../decisions/0005-go-rewrite.md)).
+- Nothing else. The YAML subset parser is hand-written and vendored in the
+  package, so there are no third-party modules to fetch.
 
 ## Setup
 
 ```bash
 git clone <this-repo>
 cd codedoc
-python3 -m codedoc --help      # runs straight from the clone, no install
+go run ./cmd/codedoc --help      # runs straight from the clone
 ```
 
-There is nothing to build and nothing to install for normal use. To run the
-tests, install pytest into a virtual environment:
+To produce a standalone binary you can drop on your `PATH`:
 
 ```bash
-python3 -m venv .venv && . .venv/bin/activate
-pip install pytest
+go build -o codedoc ./cmd/codedoc
+./codedoc --help
 ```
 
 ## Everyday workflow
 
-The package lives in `codedoc/`. The layout and responsibilities are described
-in the [architecture overview](../architecture/overview.md); read it before
-making structural changes.
+The CLI entry point is `cmd/codedoc/`; the engine is the `internal/codedoc/`
+package. The layout and responsibilities are described in the
+[architecture overview](../architecture/overview.md); read it before making
+structural changes.
 
 A normal change loop:
 
 ```bash
-# 1. make your code change under codedoc/
+# 1. make your code change under internal/codedoc/ (or cmd/codedoc/)
 # 2. update the matching doc(s) — see AGENTS.md "update protocol"
-python3 -m codedoc sync        # regenerate derived files if docs changed
-python3 -m codedoc check       # validate docs (the CI gate)
-python3 -m pytest -q           # run the tests
+go run ./cmd/codedoc sync      # regenerate derived files if docs changed
+go run ./cmd/codedoc check     # validate docs (the CI gate)
+go test ./...                  # run the tests
 ```
 
 Both `check` and the tests must be green before you open a pull request.
 
 ## Coding conventions
 
-- Standard library only in `codedoc/` — no runtime dependencies.
-- Keep generators pure (no I/O); all disk writes live in `sync.py`.
+- Standard library only — no third-party runtime dependencies.
+- Keep generators pure (no I/O); all disk writes live in `sync.go`.
 - Match the existing module boundaries; see
   [conventions](../meta/conventions.md).

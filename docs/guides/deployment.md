@@ -9,18 +9,28 @@ summary: How to add CodeDoc to an existing project and wire it into CI.
 CodeDoc is not a service you deploy; it is a tool and a convention you adopt
 into a repository. This guide covers rolling it out.
 
-## 1. Vendor the tool
+## 1. Get the tool
 
-Because CodeDoc has no dependencies (see
-[ADR 0002](../decisions/0002-zero-dependencies.md)), the simplest adoption is
-to copy the `codedoc/` package into the target repository and run it with
-`python3 -m codedoc`. (A future packaged release may be installable from an
-index; vendoring always works.)
+CodeDoc is a single static binary with no runtime dependencies (see
+[ADR 0005](../decisions/0005-go-rewrite.md)). Obtain it either way:
+
+```bash
+# Build from source (requires Go 1.24+):
+go build -o codedoc ./cmd/codedoc
+# …then move ./codedoc onto your PATH.
+
+# Or run without installing, from a clone of this repo:
+go run ./cmd/codedoc <command>
+```
+
+A prebuilt binary can be committed to the target repo or fetched in CI; because
+it is statically linked, no interpreter or package manager is required on the
+machine that runs it.
 
 ## 2. Scaffold the docs
 
 ```bash
-python3 -m codedoc init . --name "My Project" --summary "What it does."
+codedoc init . --name "My Project" --summary "What it does."
 ```
 
 This creates `AGENTS.md`, the `docs/` tree, `templates/`, `.codedoc.yml`, the
@@ -37,11 +47,11 @@ clone).
 ## 4. Wire up CI
 
 The generated [`.github/workflows/codedoc.yml`](../../.github/workflows/codedoc.yml)
-runs `codedoc check` on every pull request. For non-GitHub CI, run the same
-command:
+builds the binary and runs `codedoc check` on every pull request. For non-GitHub
+CI, run the same command:
 
 ```bash
-python3 -m codedoc check --format text
+codedoc check --format text
 ```
 
 Make the job **required** so documentation drift blocks a merge, mirroring how

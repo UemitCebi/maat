@@ -9,9 +9,9 @@ summary: How to run and write CodeDoc's tests, and what CI enforces.
 ## Running the tests
 
 ```bash
-python3 -m pytest -q            # whole suite
-python3 -m pytest tests/test_check.py -q            # one file
-python3 -m pytest tests/test_check.py::test_staleness_flags_newer_code   # one test
+go test ./...                                  # whole suite
+go test ./internal/codedoc/                    # one package
+go test ./internal/codedoc/ -run TestCheckStrictPromotesStaleness   # one test
 ```
 
 The tests exercise the CLI end to end against temporary directories: they run
@@ -20,10 +20,11 @@ The tests exercise the CLI end to end against temporary directories: they run
 ## What CI enforces
 
 The [`CodeDoc` workflow](../../.github/workflows/codedoc.yml) runs on every pull
-request and push to the main branch. It runs:
+request and push to the main branch. It builds the binary and runs:
 
 ```bash
-python3 -m codedoc check --format github
+go build -o codedoc ./cmd/codedoc
+./codedoc check --format github
 ```
 
 A merge is blocked if `check` reports any error-severity finding — stale docs,
@@ -32,9 +33,10 @@ files. Fix them by updating the relevant doc and running `codedoc sync`.
 
 ## Writing tests
 
-- Tests live under `tests/` and use `pytest` with `tmp_path` for isolation.
-- Prefer black-box tests that invoke `codedoc.cli.main([...])` and assert on
-  the return code, over testing internal functions — this keeps the CLI
-  contract (documented in the [CLI reference](../reference/cli.md)) covered.
+- Tests live in `internal/codedoc/` (e.g. `cli_test.go`) and use Go's `testing`
+  package with `t.TempDir()` for isolation.
+- Prefer black-box tests that invoke the CLI through `codedoc.Main([...])` and
+  assert on the return code, over testing internal functions — this keeps the
+  CLI contract (documented in the [CLI reference](../reference/cli.md)) covered.
 - When you add a validation rule, add a test that proves it both *fires* on a
   bad fixture and *stays quiet* on a good one.

@@ -27,9 +27,10 @@ humans can use the map below.
 ### Decisions — why it is built that way (ADRs)
 
 - [0001 Record architecture decisions](decisions/0001-record-architecture-decisions.md) — We will use Architecture Decision Records to document significant choices.
-- [0002 Zero runtime dependencies](decisions/0002-zero-dependencies.md) — CodeDoc is stdlib-only Python so it can be vendored into any repo without installing anything.
+- [0002 Zero runtime dependencies](decisions/0002-zero-dependencies.md) _(deprecated)_ — Superseded by ADR 0005. The zero-runtime-dependency goal is preserved by the Go static binary; the stdlib-only-Python mechanism is retired.
 - [0003 AGENTS.md as source of truth with generated adapters](decisions/0003-agents-md-source-of-truth.md) — One canonical instruction file (AGENTS.md); every other agent's file is generated from it and verified in CI.
 - [0004 Detect staleness via related_code timestamps](decisions/0004-related-code-staleness.md) — Docs declare the source files they describe; check compares mtimes to flag docs that may lag behind code.
+- [0005 Rewrite the CLI in Go, distribute a single static binary](decisions/0005-go-rewrite.md) — The CLI is rewritten in Go and shipped as one static binary; the Python reference is retired. Supersedes 0002.
 - [Architecture Decision Records](decisions/README.md) — Index of ADRs — the append-only log of why the system is the way it is.
 
 ### Guides — how to work on it

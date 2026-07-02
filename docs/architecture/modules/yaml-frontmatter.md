@@ -3,8 +3,8 @@ title: YAML & front-matter module
 status: current
 summary: The dependency-free parsing layer — a YAML subset and Markdown front-matter I/O.
 related_code:
-  - codedoc/_yaml.py
-  - codedoc/frontmatter.py
+  - internal/codedoc/yaml.go
+  - internal/codedoc/frontmatter.go
 ---
 
 # YAML & front-matter
@@ -20,19 +20,24 @@ that CodeDoc's front-matter and `.codedoc.yml` actually use, and nothing more.
 
 ## Key files
 
-- `codedoc/_yaml.py` — a small recursive parser and emitter for a YAML subset:
+- `internal/codedoc/yaml.go` — a small recursive parser for a YAML subset:
   scalars (with `int`/`float`/`bool`/`null` coercion), quoted strings, flow
   lists (`[a, b]`), block lists (`- item`), and nested mappings by
-  indentation. Exposes `parse(text) -> dict` and `dump(obj) -> str`.
-- `codedoc/frontmatter.py` — splits a Markdown file into its `---`-delimited
-  front-matter block and body, and rejoins them. Exposes `parse(text)` →
-  `(meta: dict, body: str)` and `render(meta, body) -> str`.
+  indentation. Exposes `yamlParse(text) (any, error)`. The tool only ever
+  *reads* YAML, so there is no emitter.
+- `internal/codedoc/frontmatter.go` — splits a Markdown file into its
+  `---`-delimited front-matter block and body. Exposes
+  `fmSplit(text) (meta map[string]any, body string, err error)` and the
+  file-reading convenience `fmRead(path)`.
 
 ## Interfaces / contracts
 
-- `parse("")` returns `{}` — an empty or absent block is valid, never an error.
-- Round-tripping is stable: `dump(parse(x))` re-parses to the same object, so
-  regenerated files do not thrash in version control.
+- `fmSplit("")` returns an empty map and no error — an empty or absent block is
+  valid, never an error.
+- Parsing is read-only and deterministic: CodeDoc never re-emits parsed YAML.
+  Generated Markdown is produced by templating and spliced between managed
+  markers, so front-matter the tool did not author is preserved verbatim and
+  files do not thrash in version control.
 - Front-matter keys used elsewhere: `title`, `status`, `summary`,
   `related_code`. See [front-matter reference](../../reference/frontmatter.md).
 
@@ -40,5 +45,7 @@ that CodeDoc's front-matter and `.codedoc.yml` actually use, and nothing more.
 
 - The parser assumes spaces, not tabs, for indentation (as does YAML proper).
 - Only the subset above is supported. If a doc needs a structure the parser
-  does not handle, extend `_yaml.py` deliberately and add a test — do not reach
-  for PyYAML (see [ADR 0002](../../decisions/0002-zero-dependencies.md)).
+  does not handle, extend `yaml.go` deliberately and add a test — do not pull in
+  a general-purpose YAML library (see
+  [ADR 0005](../../decisions/0005-go-rewrite.md), which supersedes
+  [ADR 0002](../../decisions/0002-zero-dependencies.md)).

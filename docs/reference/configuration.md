@@ -3,7 +3,7 @@ title: Configuration reference
 status: current
 summary: Every .codedoc.yml key, its default, and its effect.
 related_code:
-  - codedoc/config.py
+  - internal/codedoc/config.go
 ---
 
 # Configuration reference

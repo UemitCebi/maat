@@ -3,8 +3,8 @@ title: Front-matter reference
 status: current
 summary: The YAML front-matter schema every doc in docs/ carries.
 related_code:
-  - codedoc/model.py
-  - codedoc/frontmatter.py
+  - internal/codedoc/model.go
+  - internal/codedoc/frontmatter.go
 ---
 
 # Front-matter reference
@@ -19,7 +19,7 @@ title: Check engine module
 status: current
 summary: The validation rules behind `codedoc check`.
 related_code:
-  - codedoc/check.py
+  - internal/codedoc/check.go
 ---
 
 # Check engine

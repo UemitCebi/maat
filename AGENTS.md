@@ -21,9 +21,9 @@ interchangeably by AI coding agents, human developers, and CI — and so that
 **any** agent harness (Claude Code, Copilot, Codex, Cursor, Windsurf, Hermes,
 opencode, and others) discovers and updates the same docs.
 
-CodeDoc ships a small, **zero-dependency Python CLI** (`codedoc`) with three
-verbs — `init`, `sync`, `check` — and a documented convention for how the
-`docs/` tree is structured and kept current.
+CodeDoc ships a small, **zero-dependency Go CLI** (`codedoc`) — distributed as
+a single static binary — with three verbs — `init`, `sync`, `check` — and a
+documented convention for how the `docs/` tree is structured and kept current.
 
 This repository **dogfoods itself**: the docs you are reading were scaffolded
 by `codedoc init` and are validated by `codedoc check` in CI.
@@ -72,8 +72,8 @@ When you modify code, update docs as follows:
 Then regenerate derived indexes and adapter files, and validate:
 
 ```bash
-python3 -m codedoc sync      # regenerate llms.txt, docs/index.md nav, adapters
-python3 -m codedoc check     # fails on stale/broken/missing/drifted docs
+codedoc sync      # regenerate llms.txt, docs/index.md nav, adapters
+codedoc check     # fails on stale/broken/missing/drifted docs
 ```
 
 ### Front-matter every doc carries
@@ -87,7 +87,7 @@ title: Human-readable title
 status: current            # current | draft | deprecated
 summary: One-line description used in indexes.
 related_code:              # source paths this doc describes (optional)
-  - codedoc/check.py
+  - internal/codedoc/check.go
 ---
 ```
 
@@ -95,24 +95,28 @@ Full schema: [`docs/reference/frontmatter.md`](docs/reference/frontmatter.md).
 
 ## Setup, build, and test commands
 
-CodeDoc has **no runtime dependencies** — it is stdlib-only Python 3.8+.
+CodeDoc is a single static binary with **no runtime dependencies**. Building it
+requires Go 1.24+.
 
 ```bash
 # Run the CLI from a clone (no install needed):
-python3 -m codedoc --help
+go run ./cmd/codedoc --help
+
+# Build a standalone binary:
+go build -o codedoc ./cmd/codedoc
 
 # Validate the docs (this is what CI runs):
-python3 -m codedoc check
+go run ./cmd/codedoc check
 
 # Regenerate derived files after editing docs:
-python3 -m codedoc sync
+go run ./cmd/codedoc sync
 
-# Run the test suite (needs pytest; the code itself needs nothing):
-python3 -m pytest -q
+# Run the test suite:
+go test ./...
 ```
 
-Before declaring any change done: run `python3 -m codedoc check` **and**
-`python3 -m pytest -q`, and make sure both are green.
+Before declaring any change done: run `go run ./cmd/codedoc check` **and**
+`go test ./...`, and make sure both are green.
 
 ## Human approval
 

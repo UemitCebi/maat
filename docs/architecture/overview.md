@@ -6,10 +6,11 @@ summary: How CodeDoc is built — the CLI pipeline, the docs model, and the gene
 
 # Architecture overview
 
-CodeDoc is a small, single-package Python CLI plus a documented convention for
+CodeDoc is a small, single-binary Go CLI plus a documented convention for
 how a repository's `docs/` tree is structured. There is no server, no database,
-and no runtime dependency — everything is stdlib Python 3.8+ so the tool can be
-vendored into any repository and run anywhere.
+and no runtime dependency — it compiles to one static executable (with the
+scaffold templates embedded via `//go:embed`) so the tool can be dropped into
+any repository and run anywhere, regardless of the project's language.
 
 ## The three commands
 
@@ -25,12 +26,12 @@ codedoc check   →  validate the docs set; exit non-zero on problems (the CI ga
 
 ```
                          .codedoc.yml
-                              │  (config.load)
+                              │  (config.Load)
                               ▼
    docs/*.md  ──scan──▶  DocsModel  ──┬── generate ──▶ llms.txt, adapters, index nav
-  (frontmatter)         (model.py)    │                 (sync writes them)
+  (frontmatter)         (model.go)    │                 (sync writes them)
                                       └── validate ──▶ Findings ──▶ exit code
-                                          (check.py)              (check reports them)
+                                          (check.go)              (check reports them)
 ```
 
 The **single source of truth** is the `docs/` tree plus the root `AGENTS.md`.
@@ -42,9 +43,9 @@ silently disagree with the source.
 
 ## Why sync and check share one function
 
-`sync` and `check` both call `sync.expected_artifacts()`, which returns a
-`{path: desired_content}` map. `sync` writes it; `check` compares the map
-against what is on disk and reports "drift" for any mismatch. Because both
+`sync` and `check` both call `expectedArtifacts()` (in `sync.go`), which returns
+an ordered `{path: desired_content}` map. `sync` writes it; `check` compares the
+map against what is on disk and reports "drift" for any mismatch. Because both
 commands derive their notion of "correct" from the same function, the sequence
 *sync then check* can never fail on drift — drift can only appear from a hand
 edit to a generated file or a forgotten `sync`.
@@ -53,16 +54,16 @@ edit to a generated file or a forgotten `sync`.
 
 | Component | File | Responsibility |
 |-----------|------|----------------|
-| CLI / arg parsing | `codedoc/cli.py` | Parse args, dispatch to commands, format output |
-| Docs scanner/model | `codedoc/model.py` | Walk `docs/`, parse front-matter, index documents |
-| Generators | `codedoc/generate.py` | Render `llms.txt`, adapter files, index navigation |
-| Sync command | `codedoc/sync.py` | Compute + write derived artifacts |
-| Check command | `codedoc/check.py` | Validate front-matter, links, code refs, drift |
-| Init command | `codedoc/init.py` | Stamp the scaffold into a repo |
-| Scaffold content | `codedoc/scaffold.py` | Embedded starter templates for `init` |
-| Config | `codedoc/config.py` | Load `.codedoc.yml`, defaults, adapter registry |
-| Front-matter I/O | `codedoc/frontmatter.py` | Split/join the `---` YAML block in Markdown |
-| YAML subset | `codedoc/_yaml.py` | Dependency-free YAML parser/emitter |
+| CLI / arg parsing | `internal/codedoc/cli.go` | Parse args, dispatch to commands, format output |
+| Docs scanner/model | `internal/codedoc/model.go` | Walk `docs/`, parse front-matter, index documents |
+| Generators | `internal/codedoc/generate.go` | Render `llms.txt`, adapter files, index navigation |
+| Sync command | `internal/codedoc/sync.go` | Compute + write derived artifacts |
+| Check command | `internal/codedoc/check.go` | Validate front-matter, links, code refs, drift |
+| Init + scaffold | `internal/codedoc/scaffold.go` | Stamp the scaffold into a repo (templates embedded via `//go:embed`) |
+| Config | `internal/codedoc/config.go` | Load `.codedoc.yml`, defaults, adapter registry |
+| Front-matter I/O | `internal/codedoc/frontmatter.go` | Split/join the `---` YAML block in Markdown |
+| YAML subset | `internal/codedoc/yaml.go` | Dependency-free YAML parser/emitter |
+| Entry point | `cmd/codedoc/main.go` | `main()` — calls into `internal/codedoc` |
 
 ## Module index
 
@@ -76,6 +77,6 @@ edit to a generated file or a forgotten `sync`.
 
 The *why* behind this shape is recorded as ADRs:
 
-- [0002 Zero runtime dependencies](../decisions/0002-zero-dependencies.md)
+- [0005 Rewrite the CLI in Go, distribute a single static binary](../decisions/0005-go-rewrite.md)
 - [0003 AGENTS.md as source of truth with generated adapters](../decisions/0003-agents-md-source-of-truth.md)
 - [0004 Detect staleness via related_code timestamps](../decisions/0004-related-code-staleness.md)

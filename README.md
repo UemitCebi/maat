@@ -47,12 +47,18 @@ Two problems, one solution:
 
 ## The CLI
 
-Zero dependencies. Stdlib-only Python 3.8+. Run it straight from a clone:
+A single static binary with zero runtime dependencies. Build it with Go 1.24+,
+or run it straight from a clone:
 
 ```bash
-python3 -m codedoc init .     # scaffold docs/, AGENTS.md, config, CI, adapters
-python3 -m codedoc sync       # regenerate llms.txt + adapters + index nav
-python3 -m codedoc check      # validate docs; non-zero exit fails CI
+codedoc init .     # scaffold docs/, AGENTS.md, config, CI, adapters
+codedoc sync       # regenerate llms.txt + adapters + index nav
+codedoc check      # validate docs; non-zero exit fails CI
+```
+
+```bash
+go build -o codedoc ./cmd/codedoc   # produce the binary
+go run ./cmd/codedoc <command>      # or run without installing
 ```
 
 | Command | Does |

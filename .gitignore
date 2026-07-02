@@ -1,3 +1,10 @@
+# Go build output
+/codedoc
+/cmd/codedoc/codedoc
+*.exe
+*.test
+*.out
+
 # Byte-compiled / optimized files
 __pycache__/
 *.py[cod]
