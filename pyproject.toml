@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codedoc"
+version = "0.1.0"
+description = "Documentation-as-code for humans and AI agents: one source of truth, kept in sync with code and discoverable by any agent harness."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "CodeDoc contributors" }]
+keywords = ["documentation", "docs-as-code", "ai-agents", "agents.md", "llms.txt", "ci"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Documentation",
+    "Topic :: Software Development :: Documentation",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://github.com/your-org/codedoc/tree/main/docs"
+Source = "https://github.com/your-org/codedoc"
+
+[project.scripts]
+codedoc = "codedoc.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools]
+packages = ["codedoc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

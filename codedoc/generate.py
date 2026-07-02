@@ -1,0 +1,151 @@
+"""Generate derived artifacts from the docs model.
+
+Everything this module emits is *derived* from the single source of truth
+(``AGENTS.md`` + the ``docs/`` tree). Generated content lives between
+``managed`` markers so a file can mix generated and hand-written sections;
+:func:`splice` only ever rewrites the region between the markers.
+"""
+
+from __future__ import annotations
+
+from typing import Dict, List
+
+from .model import DocsModel, SECTION_TITLES
+
+BEGIN = "<!-- codedoc:begin (generated — edit the source docs, not this block) -->"
+END = "<!-- codedoc:end -->"
+
+
+def splice(existing: str, generated: str) -> str:
+    """Insert/replace the managed region inside ``existing``.
+
+    If no markers are present, the managed block is appended. Text outside
+    the markers is preserved exactly.
+    """
+    block = "%s\n%s\n%s" % (BEGIN, generated.rstrip("\n"), END)
+    if BEGIN in existing and END in existing:
+        pre = existing.split(BEGIN)[0]
+        post = existing.split(END, 1)[1]
+        return "%s%s%s" % (pre, block, post)
+    if existing.strip():
+        return "%s\n\n%s\n" % (existing.rstrip("\n"), block)
+    return block + "\n"
+
+
+# --------------------------------------------------------------------------- #
+# llms.txt  (https://llmstxt.org/ format)
+# --------------------------------------------------------------------------- #
+
+def llms_txt(model: DocsModel, project_name: str, project_summary: str) -> str:
+    """Render an ``llms.txt`` index of the docs tree.
+
+    Format per the llms.txt spec: an H1 name, a ``>`` blockquote summary,
+    then H2 sections each containing a Markdown bullet list of links with
+    optional ``: notes``.
+    """
+    lines: List[str] = ["# %s" % project_name, ""]
+    if project_summary:
+        lines += ["> %s" % project_summary, ""]
+    lines += [
+        "This file indexes the project's documentation for AI agents and "
+        "tools. Each link points to a Markdown document; agents should read "
+        "the ones relevant to the task before making changes.",
+        "",
+    ]
+
+    buckets = model.by_section()
+    for section in model.ordered_sections():
+        docs = buckets.get(section, [])
+        if not docs:
+            continue
+        heading = SECTION_TITLES.get(section, section.replace("_", " ").title())
+        lines.append("## %s" % heading)
+        for doc in docs:
+            note = doc.summary
+            suffix = ": %s" % note if note else ""
+            lines.append("- [%s](%s)%s" % (doc.title, doc.rel, suffix))
+        lines.append("")
+
+    # Root-level docs (index.md etc.) get their own section.
+    root_docs = buckets.get("_root", [])
+    if root_docs:
+        lines.append("## Entry points")
+        for doc in root_docs:
+            note = doc.summary
+            suffix = ": %s" % note if note else ""
+            lines.append("- [%s](%s)%s" % (doc.title, doc.rel, suffix))
+        lines.append("")
+
+    return "\n".join(lines).rstrip("\n") + "\n"
+
+
+# --------------------------------------------------------------------------- #
+# docs/index.md navigation block
+# --------------------------------------------------------------------------- #
+
+def index_nav(model: DocsModel) -> str:
+    """Generated navigation table for ``docs/index.md`` (managed region)."""
+    lines: List[str] = []
+    buckets = model.by_section()
+    for section in model.ordered_sections():
+        docs = buckets.get(section, [])
+        if not docs:
+            continue
+        heading = SECTION_TITLES.get(section, section.replace("_", " ").title())
+        lines.append("### %s" % heading)
+        lines.append("")
+        for doc in docs:
+            note = doc.summary
+            # index.md lives in docs/, links are relative to it.
+            rel = doc.rel[len(model.docs_dir) + 1 :]
+            suffix = " — %s" % note if note else ""
+            status = "" if doc.status == "current" else " _(%s)_" % doc.status
+            lines.append("- [%s](%s)%s%s" % (doc.title, rel, status, suffix))
+        lines.append("")
+    return "\n".join(lines).rstrip("\n")
+
+
+# --------------------------------------------------------------------------- #
+# Agent adapter files
+# --------------------------------------------------------------------------- #
+
+_POINTER_BODY = """\
+# {label} — project instructions
+
+> This project uses **CodeDoc**. The single source of truth for agent instructions is [`{instructions}`]({instructions_rel}) at the repository root. Read it first.
+
+**Before changing code**, read the relevant documentation in [`{docs_dir}/`]({docs_rel}) — start from [`{docs_dir}/llms.txt`]({llms_rel}), which indexes every doc.
+
+**After changing code**, update the matching doc(s) in the same change, as described in [`{instructions}`]({instructions_rel}) under "Documentation update protocol". Treat docs as part of the diff, not an afterthought.
+
+<!-- This file is generated by `codedoc sync`. Edit {instructions}, not this file. -->
+"""
+
+_MDC_BODY = """\
+---
+description: CodeDoc documentation-as-code rules for this repository
+globs:
+alwaysApply: true
+---
+
+# CodeDoc rules
+
+The single source of truth for agent instructions is `{instructions}` at the
+repository root. Read it first.
+
+- **Before changing code:** consult `{docs_dir}/` (start at
+  `{docs_dir}/llms.txt`, the machine-readable index).
+- **After changing code:** update the matching doc(s) in the same change,
+  per the "Documentation update protocol" in `{instructions}`.
+- Documentation is part of the diff. A change that alters behaviour without
+  updating its docs is incomplete.
+
+<!-- Generated by `codedoc sync`. Edit {instructions}, not this file. -->
+"""
+
+
+def adapter_content(kind: str, ctx: Dict[str, str]) -> str:
+    """Render an adapter file body for the given ``kind``."""
+    if kind == "mdc":
+        return _MDC_BODY.format(**ctx)
+    return _POINTER_BODY.format(**ctx)

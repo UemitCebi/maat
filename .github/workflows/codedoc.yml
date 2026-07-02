@@ -1,0 +1,20 @@
+name: CodeDoc
+
+# Validates that documentation stayed in sync with code on every pull request.
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run codedoc check
+        run: |
+          # CodeDoc is dependency-free stdlib Python. If vendored, adjust path.
+          python -m codedoc check --format github
