@@ -85,6 +85,11 @@ Ma'at is distributed through a personal tap,
 brew install UemitCebi/tap/maat
 ```
 
+Homebrew 6.0+ requires a one-time trust acknowledgment before loading a formula
+from a third-party tap. First-time users will see
+`Refusing to load formula … from untrusted tap` and clear it with
+`brew trust UemitCebi/tap` (stored per-machine in `~/.homebrew/trust.json`).
+
 The tap holds a cross-platform **formula** (`Formula/maat.rb`) that installs the
 pre-built binary on both macOS and Linuxbrew. A formula — rather than a Cask — is
 deliberate: Casks are macOS-only and trigger a Gatekeeper prompt on our unsigned
