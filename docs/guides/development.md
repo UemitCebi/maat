@@ -2,6 +2,9 @@
 title: Development guide
 status: current
 summary: How to set up, run, and contribute to Ma'at locally.
+related_code:
+  - .goreleaser.yaml
+  - .github/workflows/release.yml
 ---
 
 # Development guide
@@ -46,6 +49,31 @@ go test ./...                  # run the tests
 ```
 
 Both `check` and the tests must be green before you open a pull request.
+
+## Releasing
+
+Releases are cut by pushing a semantic-version tag. The
+[`release` workflow](../../.github/workflows/release.yml) then runs
+[GoReleaser](https://goreleaser.com) (config:
+[`.goreleaser.yaml`](../../.goreleaser.yaml)), which cross-compiles the
+binaries for linux/darwin/windows on amd64/arm64, builds the archives and
+`checksums.txt`, and publishes a GitHub Release.
+
+```bash
+# 1. ensure main is green (check + tests) and the tag points at it
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0        # triggers the release workflow
+```
+
+The tag is the single source of truth for the version: GoReleaser injects it
+via `-ldflags` into `internal/maat`'s `version` variable, so a `v0.1.0` tag
+makes the released binary report `maat 0.1.0`. A plain source build with no tag
+reports the VCS pseudo-version instead (see `Version()` in `util.go`). Tags
+must be `vMAJOR.MINOR.PATCH`; pre-release tags (`v0.2.0-rc1`) are published as
+GitHub pre-releases automatically.
+
+Once a tag is pushed, `go install github.com/UemitCebi/maat@latest` resolves it
+through the Go module proxy.
 
 ## Coding conventions
 

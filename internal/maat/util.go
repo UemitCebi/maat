@@ -2,20 +2,41 @@
 // docs/ tree into a model, generating derived artifacts (llms.txt, index
 // navigation, agent adapter files), and validating the set for CI.
 //
-// It is a faithful port of the reference Python implementation under maat/.
+// It is a faithful port of the reference Python implementation under codedoc/.
 // The two produce byte-identical output; the Python test suite and this
 // package's tests are the shared conformance spec.
 package maat
 
 import (
 	"os"
+	"runtime/debug"
 	"strconv"
 	"strings"
 )
 
-// Version is the Ma'at CLI version. Kept in lockstep with the Python
-// package's __version__.
-const Version = "0.1.0"
+// version is the release version, injected at build time by GoReleaser via
+// -ldflags "-X github.com/UemitCebi/maat/internal/maat.version=<tag>". It is
+// empty for non-release builds.
+var version = ""
+
+// Version returns the CLI version string. Resolution order:
+//  1. the release version injected at build time via -ldflags (GoReleaser
+//     sets this for the published binaries);
+//  2. the module version from the build info — a clean tag such as "v0.1.0"
+//     when installed with `go install <module>@vX`, or a VCS pseudo-version
+//     (commit + "+dirty") for a source build ahead of / off a release tag;
+//  3. "dev" when no build info is available at all.
+func Version() string {
+	if version != "" {
+		return version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if v := info.Main.Version; v != "" && v != "(devel)" {
+			return strings.TrimPrefix(v, "v")
+		}
+	}
+	return "dev"
+}
 
 // truthy mirrors Python's notion of truthiness for the scalar/collection types
 // our YAML subset yields. Used wherever the Python code relied on `if value:`.

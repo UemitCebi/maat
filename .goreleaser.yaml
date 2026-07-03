@@ -1,0 +1,63 @@
+# GoReleaser configuration for Ma'at.
+# https://goreleaser.com — validated with `goreleaser check`.
+version: 2
+
+project_name: maat
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: maat
+    main: .
+    binary: maat
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      # Inject the release version into the engine package. Matches the
+      # resolution in internal/maat/util.go (var version).
+      - -s -w -X github.com/UemitCebi/maat/internal/maat.version={{ .Version }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: maat
+    formats:
+      - tar.gz
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: UemitCebi
+    name: maat
+  draft: false
+  prerelease: auto

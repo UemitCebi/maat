@@ -4,6 +4,9 @@
 *.test
 *.out
 
+# GoReleaser
+/dist/
+
 # Byte-compiled / optimized files
 __pycache__/
 *.py[cod]

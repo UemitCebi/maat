@@ -375,7 +375,7 @@ func TestVersionFlag(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("--version exited %d", code)
 	}
-	if !strings.Contains(out, "maat "+Version) {
+	if !strings.Contains(out, "maat "+Version()) {
 		t.Errorf("expected version string, got: %s", out)
 	}
 }

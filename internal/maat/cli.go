@@ -50,7 +50,7 @@ func Main(argv []string, stdout, stderr io.Writer) int {
 	// Top-level --version / -h before a subcommand.
 	switch argv[0] {
 	case "--version":
-		fmt.Fprintf(stdout, "maat %s\n", Version)
+		fmt.Fprintf(stdout, "maat %s\n", Version())
 		return 0
 	case "-h", "--help":
 		fmt.Fprintln(stdout, usageText)
