@@ -85,9 +85,11 @@ Ma'at is distributed through a personal tap,
 brew install UemitCebi/tap/maat
 ```
 
-Homebrew 6.0+ requires a one-time trust acknowledgment before loading a formula
-from a third-party tap. First-time users will see
-`Refusing to load formula … from untrusted tap` and clear it with
+This fully-qualified form installs without a prompt: naming the tap on the
+command line satisfies Homebrew 6.0+'s tap-trust check. The safeguard only
+triggers when the tap is *not* named on the command line — e.g. the short-name
+flow (`brew tap UemitCebi/tap` then `brew install maat`), which fails with
+`Refusing to load formula … from untrusted tap` until the user runs
 `brew trust UemitCebi/tap` (stored per-machine in `~/.homebrew/trust.json`).
 
 The tap holds a cross-platform **formula** (`Formula/maat.rb`) that installs the
