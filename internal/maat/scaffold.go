@@ -77,6 +77,21 @@ func scaffoldVersionPin() string {
 	return v
 }
 
+// scaffoldActionRef returns the git ref used to pin the composite Action /
+// reusable workflow in scaffolded CI (e.g. "v0.2.0"). Like scaffoldVersionPin
+// it matches the scaffolding binary's own release for reproducibility. A
+// development build can't know a real release tag, so it emits an obvious
+// "vX.Y.Z" placeholder the user replaces. A moving major pointer (@v1) is
+// intentionally not used until 1.0, so it can't collide with the semver-tag
+// release trigger. See ADR 0006.
+func scaffoldActionRef() string {
+	v := Version()
+	if isDevBuild(v) {
+		return "vX.Y.Z"
+	}
+	return "v" + v
+}
+
 func fill(text string, subs map[string]string) string {
 	// Longest keys first so {{SUMMARY_INLINE}} is not partially matched by
 	// {{SUMMARY}}. Go maps are unordered, so sort explicitly.
@@ -110,13 +125,14 @@ func RunInit(root, project, summary string, force bool) (*InitResult, error) {
 		inline = inline[:200]
 	}
 	subs := map[string]string{
-		"PROJECT":        project,
-		"SUMMARY":        summary,
-		"SUMMARY_INLINE": inline,
-		"DATE":           time.Now().Format("2006-01-02"),
-		"NAME":           "example",
-		"PATH":           "src/example",
-		"MAAT_VERSION":   scaffoldVersionPin(),
+		"PROJECT":         project,
+		"SUMMARY":         summary,
+		"SUMMARY_INLINE":  inline,
+		"DATE":            time.Now().Format("2006-01-02"),
+		"NAME":            "example",
+		"PATH":            "src/example",
+		"MAAT_VERSION":    scaffoldVersionPin(),
+		"MAAT_ACTION_REF": scaffoldActionRef(),
 	}
 
 	result := &InitResult{}

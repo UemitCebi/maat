@@ -29,7 +29,7 @@ jobs:
 
 # Alternatively, replace the two steps above with the published composite action:
 #
-#   - uses: UemitCebi/maat@v1
+#   - uses: UemitCebi/maat@{{MAAT_ACTION_REF}}
 #     with:
 #       version: "{{MAAT_VERSION}}"   # optional; empty = latest
 #
@@ -37,6 +37,6 @@ jobs:
 #
 #   jobs:
 #     maat:
-#       uses: UemitCebi/maat/.github/workflows/maat-check.yml@v1
+#       uses: UemitCebi/maat/.github/workflows/maat-check.yml@{{MAAT_ACTION_REF}}
 #       with:
 #         maat_version: "{{MAAT_VERSION}}"

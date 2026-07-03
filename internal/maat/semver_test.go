@@ -19,8 +19,8 @@ func TestCompareSemver(t *testing.T) {
 		{"0.3.1", "0.3.0", 1},
 		{"0.3.0", "0.4.0", -1},
 		{"1.0.0", "0.9.9", 1},
-		{"0.3", "0.3.0", 0},   // missing patch defaults to 0
-		{"1", "1.0.0", 0},     // missing minor+patch default to 0
+		{"0.3", "0.3.0", 0},        // missing patch defaults to 0
+		{"1", "1.0.0", 0},          // missing minor+patch default to 0
 		{"0.3.0-rc1", "0.3.0", -1}, // prerelease < release
 		{"0.3.0-rc2", "0.3.0-rc1", 1},
 	}

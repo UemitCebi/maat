@@ -21,7 +21,7 @@ channel fits:
 curl -sSf https://raw.githubusercontent.com/UemitCebi/maat/main/scripts/install.sh | sh
 
 # Pin an exact version (recommended for CI — see step 4):
-curl -sSf https://raw.githubusercontent.com/UemitCebi/maat/main/scripts/install.sh | MAAT_VERSION=0.1.0 sh
+curl -sSf https://raw.githubusercontent.com/UemitCebi/maat/main/scripts/install.sh | MAAT_VERSION=0.2.0 sh
 
 # Homebrew:
 brew install UemitCebi/tap/maat
@@ -64,9 +64,9 @@ binary via the universal script and runs `maat check` on every pull request.
 On GitHub, the shortest wiring is the published composite action:
 
 ```yaml
-- uses: UemitCebi/maat@v1
+- uses: UemitCebi/maat@v0.2.0
   with:
-    version: "0.1.0"   # optional; omit to track the latest release
+    version: "0.2.0"   # optional; omit to track the latest release
 ```
 
 An org with many repos can instead call the reusable workflow so the runner,
@@ -75,15 +75,15 @@ checkout, and flags live in one place:
 ```yaml
 jobs:
   maat:
-    uses: UemitCebi/maat/.github/workflows/maat-check.yml@v1
+    uses: UemitCebi/maat/.github/workflows/maat-check.yml@v0.2.0
     with:
-      maat_version: "0.1.0"
+      maat_version: "0.2.0"
 ```
 
 For non-GitHub CI, install the binary and run the same command:
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/UemitCebi/maat/main/scripts/install.sh | MAAT_VERSION=0.1.0 sh
+curl -sSf https://raw.githubusercontent.com/UemitCebi/maat/main/scripts/install.sh | MAAT_VERSION=0.2.0 sh
 maat check --format text
 ```
 

@@ -5,9 +5,9 @@
 #
 # Usage in a repo's workflow:
 #
-#   - uses: UemitCebi/maat@v1              # or actions/checkout of this repo
+#   - uses: UemitCebi/maat@v0.2.0          # or actions/checkout of this repo
 #     with:
-#       version: 0.1.0                     # optional; defaults to latest
+#       version: 0.2.0                     # optional; defaults to latest
 #       args: --format github              # optional extra `maat check` flags
 #
 # It installs via scripts/install.sh (no Go toolchain required) and emits

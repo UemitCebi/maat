@@ -140,8 +140,9 @@ maintained in this repo (see
 - [`action.yml`](../../action.yml) (composite action) and
   [`.github/workflows/maat-check.yml`](../../.github/workflows/maat-check.yml)
   (reusable workflow) — both install through `install.sh`, so there is one
-  install code path to maintain. They are versioned by a moving major tag
-  (`v1`) that consumers reference as `UemitCebi/maat@v1`.
+  install code path to maintain. Consumers pin them to an exact release tag
+  (e.g. `UemitCebi/maat@v0.2.0`); a moving major-version pointer (`@v1`) is
+  deferred until 1.0, so it cannot collide with the semver release trigger.
 
 ## Coding conventions
 
