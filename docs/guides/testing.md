@@ -30,15 +30,17 @@ request and push to the main branch, as three independent jobs:
   broken internal links, missing `related_code` targets, or drifted generated
   files. Fix them by updating the relevant doc and running `maat sync`.
 - **test** — runs `go test ./...`.
-- **lint** — runs [`golangci-lint`](https://golangci-lint.run) against the
-  config in [`.golangci.yml`](../../.golangci.yml).
+- **lint** — runs [`golangci-lint`](https://golangci-lint.run) v2 against the
+  config in [`.golangci.yml`](../../.golangci.yml). The config uses the v2
+  schema, so a v1 binary (e.g. an old `latest` install) will reject it —
+  match the version pinned in the workflow.
 
 Run all three locally before opening a pull request:
 
 ```bash
 go run . check
 go test ./...
-golangci-lint run ./...   # go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+golangci-lint run ./...   # go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.2
 ```
 
 ## Writing tests
