@@ -12,7 +12,7 @@
 #
 # It installs via scripts/install.sh (no Go toolchain required) and emits
 # GitHub annotations by default so findings surface inline on the PR.
-name: "Ma'at check"
+name: "maat check"
 description: "Install Ma'at and validate a repository's docs-as-code set (the CI gate)."
 branding:
   icon: "check-circle"
