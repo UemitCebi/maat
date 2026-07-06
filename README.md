@@ -16,6 +16,8 @@ Cursor, Windsurf, opencode, Hermes, Gemini CLI, and others — Ma'at gives it a
 single, discoverable source of truth and a protocol for keeping the docs
 current as the code changes.
 
+![`maat init` scaffolding a repository, then `maat check` validating it](.github/assets/demo.gif)
+
 ---
 
 ## Why
