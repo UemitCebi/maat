@@ -15,10 +15,15 @@ related_code:
 
 ## Prerequisites
 
-- **Go 1.24+** — to build and test Ma'at. There are no other build- or
-  run-time dependencies (see [ADR 0005](../decisions/0005-go-rewrite.md)).
-- Nothing else. The YAML subset parser is hand-written and vendored in the
-  package, so there are no third-party modules to fetch.
+- **Go 1.24+** — to build and test Ma'at. There are no *run-time*
+  dependencies: the binary is a single static executable
+  (see [ADR 0005](../decisions/0005-go-rewrite.md)).
+- A small set of Go module dependencies compile into the binary at build time
+  (terminal styling and the `init` wizard; see
+  [ADR 0011](../decisions/0011-build-time-go-dependencies.md)) — `go build`/
+  `go test` fetch them automatically via the Go module proxy the first time,
+  same as any other Go project. The YAML subset parser remains hand-written
+  and vendored in the package; it was never a candidate for a module.
 
 ## Setup
 
@@ -156,7 +161,9 @@ maintained in this repo (see
 
 ## Coding conventions
 
-- Standard library only — no third-party runtime dependencies.
+- Build-time-only Go module dependencies are fine (they compile into the
+  static binary); no runtime process, network call, or subprocess dependency
+  — see [ADR 0011](../decisions/0011-build-time-go-dependencies.md).
 - Keep generators pure (no I/O); all disk writes live in `sync.go`.
 - Match the existing module boundaries; see
   [conventions](../meta/conventions.md).

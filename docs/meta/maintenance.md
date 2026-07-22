@@ -21,7 +21,9 @@ This documentation is kept current by three actors and one tool.
 
 ## The tool
 
-`maat` is a zero-dependency Go CLI, distributed as a single static binary:
+`maat` is a Go CLI with zero *runtime* dependencies
+([ADR 0011](../decisions/0011-build-time-go-dependencies.md)), distributed as
+a single static binary:
 
 - `maat sync` — regenerate `llms.txt`, `docs/index.md` navigation, and the
   per-agent adapter files from the docs tree.

@@ -47,6 +47,15 @@ block inside it, non-destructively (see
 [ADR 0009](../decisions/0009-contract-as-managed-block.md)). That is why the
 instruction file can be reported as both `skip` and `gen`.
 
+If `init` is run with **neither** `--name` nor `--summary`, **and** stdout and
+stdin are both a real terminal, it prompts interactively for them instead of
+falling back to the directory name and a `TODO` placeholder. Giving either
+flag, or running non-interactively (piped output, no TTY, CI), skips the
+prompt entirely and behaves exactly as before. Aborting the prompt (Ctrl-C or
+Esc) exits `130` without scaffolding anything. See
+[ADR 0011](../decisions/0011-build-time-go-dependencies.md) and the
+[terminal presentation module](../architecture/modules/presentation.md).
+
 ## `sync`
 
 Regenerate every derived artifact from the docs tree: `docs/llms.txt`, the
@@ -72,6 +81,16 @@ This is the command CI runs.
 See the [check engine](../architecture/modules/check.md) for the full rule
 list.
 
+## Colored output
+
+`init`, `sync`, and `check --format text` style their output when stdout is a
+real terminal. `NO_COLOR` (any non-empty value) always disables it;
+`CLICOLOR_FORCE` (any value other than `0`) always forces it on even when
+stdout isn't a terminal. `--format github` never carries color, regardless of
+either variable. See
+[ADR 0011](../decisions/0011-build-time-go-dependencies.md) and
+[environment variables](environment.md).
+
 ## Exit codes
 
 | Code | Meaning |
@@ -79,3 +98,4 @@ list.
 | `0` | Success — no error-severity findings |
 | `1` | Validation failed — at least one error-severity finding |
 | `2` | Usage/configuration error (e.g. no `docs/` directory, bad arguments, or a released binary that does not satisfy the repo's [`maat_version`](configuration.md#maat_version) constraint) |
+| `130` | `init`'s interactive wizard was aborted (Ctrl-C/Esc) before completing |

@@ -18,6 +18,8 @@ Copy [`_template.md`](_template.md) to `NNNN-short-title.md` (next number).
 
 Newest first:
 
+- [0011 Build-time Go dependencies are permitted; runtime dependencies are not](0011-build-time-go-dependencies.md)
+- [0010 Hand-copy templates live under .maat/, not the repo root](0010-templates-under-dot-maat.md)
 - [0009 Maintenance contract as a managed block in the instruction file](0009-contract-as-managed-block.md)
 - [0008 Brownfield adoption and BYO-agent retrospection](0008-brownfield-adoption-byo-agent.md)
 - [0007 Agent skills as managed artifacts](0007-agent-skills-as-managed-artifacts.md)

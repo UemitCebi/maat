@@ -21,9 +21,11 @@ interchangeably by AI coding agents, human developers, and CI — and so that
 **any** agent harness (Claude Code, Copilot, Codex, Cursor, Windsurf, Hermes,
 opencode, and others) discovers and updates the same docs.
 
-Ma'at ships a small, **zero-dependency Go CLI** (`maat`) — distributed as
-a single static binary — with three verbs — `init`, `sync`, `check` — and a
-documented convention for how the `docs/` tree is structured and kept current.
+Ma'at ships a small Go CLI (`maat`) with **zero runtime dependencies**
+(see [ADR 0011](docs/decisions/0011-build-time-go-dependencies.md)) —
+distributed as a single static binary — with three verbs — `init`, `sync`,
+`check` — and a documented convention for how the `docs/` tree is structured
+and kept current.
 
 This repository **dogfoods itself**: the docs you are reading were scaffolded
 by `maat init` and are validated by `maat check` in CI.

@@ -10,7 +10,11 @@ Ma'at is a small, single-binary Go CLI plus a documented convention for
 how a repository's `docs/` tree is structured. There is no server, no database,
 and no runtime dependency — it compiles to one static executable (with the
 scaffold templates embedded via `//go:embed`) so the tool can be dropped into
-any repository and run anywhere, regardless of the project's language.
+any repository and run anywhere, regardless of the project's language. A
+handful of Go module dependencies compile *into* that binary (terminal
+styling, an interactive prompt) — see
+[ADR 0011](../decisions/0011-build-time-go-dependencies.md) for why that's
+compatible with "no runtime dependency."
 
 ## The three commands
 
@@ -63,6 +67,7 @@ edit to a generated file or a forgotten `sync`.
 | Config | `internal/maat/config.go` | Load `.maat.yml`, defaults, adapter registry |
 | Front-matter I/O | `internal/maat/frontmatter.go` | Split/join the `---` YAML block in Markdown |
 | YAML subset | `internal/maat/yaml.go` | Dependency-free YAML parser/emitter |
+| Terminal presentation | `internal/maat/tty.go`, `style.go`, `wizard.go` | TTY/color detection, Lip Gloss styling, the Huh `init` wizard |
 | Entry point | `main.go` | `main()` — calls into `internal/maat` |
 
 ## Module index
@@ -72,6 +77,8 @@ edit to a generated file or a forgotten `sync`.
 - [Model & generators](modules/model-generate.md) — scanning docs and
   rendering derived artifacts.
 - [Check engine](modules/check.md) — the validation rules behind the CI gate.
+- [Terminal presentation](modules/presentation.md) — TTY/color detection,
+  styled output, and the interactive `init` wizard.
 
 ## Key design decisions
 
@@ -80,3 +87,4 @@ The *why* behind this shape is recorded as ADRs:
 - [0005 Rewrite the CLI in Go, distribute a single static binary](../decisions/0005-go-rewrite.md)
 - [0003 AGENTS.md as source of truth with generated adapters](../decisions/0003-agents-md-source-of-truth.md)
 - [0004 Detect staleness via related_code timestamps](../decisions/0004-related-code-staleness.md)
+- [0011 Build-time Go dependencies are permitted; runtime dependencies are not](../decisions/0011-build-time-go-dependencies.md)

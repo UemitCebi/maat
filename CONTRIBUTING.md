@@ -1,8 +1,10 @@
 # Contributing to Ma'at
 
-Thanks for considering a contribution. Ma'at is a small, zero-dependency Go
-CLI, and its own docs are built with itself — so the same rules that apply to
-users of the tool apply to this repository.
+Thanks for considering a contribution. Ma'at is a small Go CLI with zero
+*runtime* dependencies — see [ADR 0011](docs/decisions/0011-build-time-go-dependencies.md)
+for what that does and doesn't rule out — and its own docs are built with
+itself, so the same rules that apply to users of the tool apply to this
+repository.
 
 ## Before you start
 
@@ -40,8 +42,9 @@ request. CI runs the same `maat check` gate on every PR.
 
 ## Coding conventions
 
-- Standard library only — no third-party runtime dependencies (see
-  [ADR 0002](docs/decisions/0002-zero-dependencies.md)).
+- Build-time-only Go module dependencies are fine (they compile into the
+  static binary); no runtime process, network call, or subprocess dependency
+  — see [ADR 0011](docs/decisions/0011-build-time-go-dependencies.md).
 - Keep generators pure (no I/O); all disk writes live in `internal/maat/sync.go`.
 - Match the existing module boundaries — see
   [`docs/meta/conventions.md`](docs/meta/conventions.md) and the

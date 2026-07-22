@@ -162,31 +162,53 @@ func flagValue(args []string, i int) (string, int, error) {
 }
 
 // cmdInit's (int, error) signature matches cmdSync/cmdCheck so Main can
-// dispatch to all three uniformly; init has no non-zero success exit code.
-//
-//nolint:unparam
+// dispatch to all three uniformly.
 func cmdInit(args []string, stdout, _ io.Writer) (int, error) {
 	p, err := parseArgs("init", args)
 	if err != nil {
 		return 0, err
 	}
 	root := absRoot(p.path)
-	name := p.name
+	name, summary := p.name, p.summary
+	if name == "" && summary == "" && isInteractiveTerminal(stdout) {
+		w, err := runInitWizard(filepath.Base(root))
+		if err != nil {
+			return 0, err
+		}
+		if !w.ok {
+			// User aborted the wizard (Ctrl-C/Esc) — SIGINT exit-code convention.
+			return 130, nil
+		}
+		name, summary = w.name, w.summary
+	}
 	if name == "" {
 		name = filepath.Base(root)
 	}
-	result, err := RunInit(root, name, p.summary, p.force)
+	result, err := RunInit(root, name, summary, p.force)
 	if err != nil {
 		return 0, err
 	}
+	color := isColorEnabled(stdout)
 	for _, rel := range result.Created {
-		fmt.Fprintf(stdout, "  create  %s\n", rel)
+		if color {
+			fmt.Fprintln(stdout, styledCreateLine(rel))
+		} else {
+			fmt.Fprintf(stdout, "  create  %s\n", rel)
+		}
 	}
 	for _, rel := range result.Skipped {
-		fmt.Fprintf(stdout, "  skip    %s (exists; use --force to overwrite)\n", rel)
+		if color {
+			fmt.Fprintln(stdout, styledSkipLine(rel))
+		} else {
+			fmt.Fprintf(stdout, "  skip    %s (exists; use --force to overwrite)\n", rel)
+		}
 	}
 	for _, rel := range result.Generated {
-		fmt.Fprintf(stdout, "  gen     %s\n", rel)
+		if color {
+			fmt.Fprintln(stdout, styledGenLine(rel))
+		} else {
+			fmt.Fprintf(stdout, "  gen     %s\n", rel)
+		}
 	}
 	fmt.Fprintf(stdout, "\nMa'at initialized in %s\n", root)
 	if len(result.Skipped) > 0 {
@@ -237,8 +259,13 @@ func cmdSync(args []string, stdout, _ io.Writer) (int, error) {
 	if len(changed) == 0 {
 		fmt.Fprintln(stdout, "Already in sync — no files changed.")
 	} else {
+		color := isColorEnabled(stdout)
 		for _, rel := range changed {
-			fmt.Fprintf(stdout, "  update  %s\n", rel)
+			if color {
+				fmt.Fprintln(stdout, styledUpdateLine(rel))
+			} else {
+				fmt.Fprintf(stdout, "  update  %s\n", rel)
+			}
 		}
 		fmt.Fprintf(stdout, "\nSynced %d file(s).\n", len(changed))
 	}
@@ -289,16 +316,27 @@ func cmdCheck(args []string, stdout, stderr io.Writer) (int, error) {
 		}
 	}
 
+	// --format=github output is machine-consumed (GitHub Actions annotation
+	// syntax) and must never carry ANSI codes, regardless of TTY/color state.
+	color := isColorEnabled(stdout) && p.format != "github"
 	if p.format == "github" {
 		emitGitHub(findings, stdout)
+	} else if color {
+		for _, f := range findings {
+			fmt.Fprintln(stdout, styledFindingLine(f))
+		}
 	} else {
 		for _, f := range findings {
 			fmt.Fprintln(stdout, f.String())
 		}
 	}
 
-	fmt.Fprintf(stdout, "\nChecked %d document(s): %d error(s), %d warning(s).\n",
-		len(model.Documents), errors, warnings)
+	if color {
+		fmt.Fprint(stdout, styledCheckSummary(len(model.Documents), errors, warnings))
+	} else {
+		fmt.Fprintf(stdout, "\nChecked %d document(s): %d error(s), %d warning(s).\n",
+			len(model.Documents), errors, warnings)
+	}
 
 	if errors > 0 {
 		return 1, nil

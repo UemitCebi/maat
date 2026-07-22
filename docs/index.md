@@ -21,6 +21,7 @@ humans can use the map below.
 
 - [Check engine module](architecture/modules/check.md) — The validation rules behind `maat check` — the CI gate.
 - [Model & generators module](architecture/modules/model-generate.md) — Scanning the docs tree into a model and rendering derived artifacts from it.
+- [Terminal presentation module](architecture/modules/presentation.md) — TTY/color detection, Lip Gloss styling, and the Huh init wizard layered on top of the plain-text output every command already produces.
 - [YAML & front-matter module](architecture/modules/yaml-frontmatter.md) — The dependency-free parsing layer — a YAML subset and Markdown front-matter I/O.
 - [Architecture Overview](architecture/overview.md) — How Ma'at is built — the CLI pipeline, the docs model, and the generate/validate split.
 
@@ -36,6 +37,7 @@ humans can use the map below.
 - [0008 Brownfield adoption and BYO-agent retrospection](decisions/0008-brownfield-adoption-byo-agent.md) — Adopting Ma'at in an existing repository is non-destructive by default; deriving documentation from an established codebase is delegated to the user's own AI agent via a shipped retrospect skill, with the CLI providing only deterministic facts.
 - [0009 Maintenance contract as a managed block in the instruction file](decisions/0009-contract-as-managed-block.md) — The documentation update protocol, front-matter schema, and skills index are framework invariants, so they are rendered into the managed maat:begin/end block spliced into the instruction file — not hand-written scaffold prose — so a brownfield AGENTS.md that init preserved still gains the contract non-destructively.
 - [0010 Hand-copy templates live under .maat/, not the repo root](decisions/0010-templates-under-dot-maat.md) — init no longer scaffolds a root-level templates/ folder; the redundant ADR copy is dropped in favor of the existing docs/decisions/_template.md, and the module doc template moves to .maat/templates/_module.md, matching the leading-underscore naming already used for the ADR template.
+- [0011 Build-time Go dependencies are permitted; runtime dependencies are not](decisions/0011-build-time-go-dependencies.md) — Go module dependencies that compile statically into the binary (no external runtime process, no network call, no subprocess) are permitted going forward. The Charm libraries (Lip Gloss, Huh, and Bubble Tea transitively via Huh) are the first exercise of this policy, used for terminal styling and an interactive `init` wizard.
 - [Architecture Decision Records](decisions/README.md) — Index of ADRs — the append-only log of why the system is the way it is.
 
 ### Guides — how to work on it
