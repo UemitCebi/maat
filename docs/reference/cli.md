@@ -22,8 +22,9 @@ maat --version
 ## `init`
 
 Scaffold Ma'at into a repository: writes `AGENTS.md`, the `docs/` tree,
-`templates/`, `.maat.yml`, and the CI workflow, then runs `sync` to produce
-the derived files.
+`.maat/templates/` (the module doc template — the ADR template lives at
+`docs/decisions/_template.md`), `.maat.yml`, and the CI workflow, then runs
+`sync` to produce the derived files.
 
 | Flag | Effect |
 |------|--------|

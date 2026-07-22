@@ -13,8 +13,9 @@ This documentation is kept current by three actors and one tool.
 1. **AI agents** update the relevant docs in the same change they make to the
    code, following the "Documentation update protocol" in the root
    `AGENTS.md`. A human approves the result in review.
-2. **Developers** editing by hand do the same, using the templates in
-   `templates/` and the conventions in `conventions.md`.
+2. **Developers** editing by hand do the same, using the ADR template at
+   `docs/decisions/_template.md`, the module doc template at
+   `.maat/templates/_module.md`, and the conventions in `conventions.md`.
 3. **CI/CD** runs `maat check` on every pull request and fails the build if
    documentation is stale, links are broken, or generated files drifted.
 

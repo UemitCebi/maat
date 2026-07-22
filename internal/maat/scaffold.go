@@ -63,8 +63,9 @@ type scaffoldFile struct {
 }
 
 // scaffoldFiles is the ordered set of files init stamps out, mirroring
-// init._FILES in the Python implementation (note _template.md and the two
-// templates/ copies).
+// init._FILES in the Python implementation (note the leading-underscore
+// naming shared by both hand-copy templates: docs/decisions/_template.md and
+// .maat/templates/_module.md — see ADR 0010).
 var scaffoldFiles = []scaffoldFile{
 	{"AGENTS.md", "AGENTS.md"},
 	{"docs/index.md", "index.md"},
@@ -81,8 +82,7 @@ var scaffoldFiles = []scaffoldFile{
 	{"docs/meta/conventions.md", "meta_conventions.md"},
 	{"docs/meta/glossary.md", "meta_glossary.md"},
 	{"docs/meta/maintenance.md", "meta_maintenance.md"},
-	{"templates/adr.md", "adr_template.md"},
-	{"templates/module.md", "module_template.md"},
+	{".maat/templates/_module.md", "module_template.md"},
 	{".maat.yml", "config.yml"},
 	{".github/workflows/maat.yml", "workflow.yml"},
 }

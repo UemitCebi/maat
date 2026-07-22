@@ -137,7 +137,9 @@ docs/
   guides/
   reference/
   meta/
-templates/                       # ADR and module templates
+.maat/
+  skills/                        # generated agent skills (e.g. retrospect)
+  templates/                     # module doc template (ADR template lives at docs/decisions/_template.md)
 .maat.yml                        # Ma'at configuration
 .github/workflows/maat.yml       # CI gate
 
@@ -178,7 +180,7 @@ If your repository already has an `AGENTS.md`, Ma'at preserves your prose and in
 A single static binary with zero runtime dependencies.
 
 ```bash
-maat init .     # scaffold docs/, AGENTS.md, config, CI, templates, and adapters
+maat init .     # scaffold docs/, AGENTS.md, config, CI, .maat/templates, and adapters
 maat sync       # regenerate llms.txt, adapters, and index navigation
 maat check      # validate docs and fail on drift
 ```

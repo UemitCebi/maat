@@ -42,9 +42,9 @@ required on the machine that runs it.
 maat init . --name "My Project" --summary "What it does."
 ```
 
-This creates `AGENTS.md`, the `docs/` tree, `templates/`, `.maat.yml`, the
-CI workflow, and generates `llms.txt` and the agent adapter files. Existing
-files are not overwritten.
+This creates `AGENTS.md`, the `docs/` tree, `.maat/templates/`, `.maat.yml`,
+the CI workflow, and generates `llms.txt` and the agent adapter files.
+Existing files are not overwritten.
 
 If your repository **already has an `AGENTS.md`**, `init` preserves it (it is
 listed as `skip`) and still splices Ma'at's maintenance contract — the
